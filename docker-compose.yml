@@ -1,0 +1,12 @@
+services:
+  vlei-verifier:
+    image: gleif/vlei-verifier:0.1.0
+    container_name: vlei-verifier
+    hostname: vlei-verifier
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+      - INSTANCE_NUMBER=${INSTANCE_NUMBER}
+    ports:
+      - ${SERVICE_PORT}:7676
+
+

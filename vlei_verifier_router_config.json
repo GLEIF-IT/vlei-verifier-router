@@ -1,0 +1,3 @@
+{
+  "verifier_instances": ["http://localhost:5651", "http://localhost:5652", "http://localhost:5653"]
+}

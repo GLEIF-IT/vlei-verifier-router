@@ -1,0 +1,7 @@
+setup.py
+vlei_verifier_router.egg-info/PKG-INFO
+vlei_verifier_router.egg-info/SOURCES.txt
+vlei_verifier_router.egg-info/dependency_links.txt
+vlei_verifier_router.egg-info/not-zip-safe
+vlei_verifier_router.egg-info/requires.txt
+vlei_verifier_router.egg-info/top_level.txt
