@@ -77,6 +77,7 @@ setup(
         "fastapi>=0.111.1",
         "requests>=2.32.3",
         "python-multipart",
+        "apscheduler>=3.11.0",
         'vlei-verifier-client==0.1.0'
     ],
     extras_require={

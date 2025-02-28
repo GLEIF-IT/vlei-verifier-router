@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 
-@dataclass(frozen=True)
+@dataclass()
 class RouterState:
     """
     Singleton class to manage verifier instances and their mappings to AIDs.
@@ -17,6 +17,7 @@ class RouterState:
     aid_to_verifier_instances_mapping: Dict[str, str] = field(default_factory=dict)
 
     _instance: "RouterState" = None
+    __current_verifier_instance_num: int = 0
 
     def __new__(cls, *args, **kwargs):
         """
@@ -70,14 +71,14 @@ class RouterState:
             return self.aid_to_verifier_instances_mapping[aid]
 
         logger.debug(f"No verifier instance mapped for AID: {aid}. Assigning a random instance.")
-        return self._get_random_verifier_instance()
+        return self._get_next_verifier_instance()
 
     def get_verifier_instance_for_said(self, said: str) -> str:
         """
         Get a random verifier instance for the given SAID.
         """
         logger.debug(f"Getting random verifier instance for SAID: {said}")
-        return self._get_random_verifier_instance()
+        return self._get_next_verifier_instance()
 
     def set_verifier_instance_for_aid(self, aid: str, verifier_instance: str) -> None:
         """
@@ -86,14 +87,17 @@ class RouterState:
         logger.info(f"Mapping verifier instance {verifier_instance} to AID: {aid}")
         self.aid_to_verifier_instances_mapping[aid] = verifier_instance
 
-    def _get_random_verifier_instance(self) -> str:
+    def _get_next_verifier_instance(self) -> str:
         """
         Helper method to get a random verifier instance.
         """
         if not self.verifier_instances:
             logger.error("No verifier instances available.")
             raise ValueError("No verifier instances available.")
-
-        instance = random.choice(self.verifier_instances)
-        logger.debug(f"Selected random verifier instance: {instance}")
+        # Round-robin
+        if self.__current_verifier_instance_num >= len(self.verifier_instances):
+            self.__current_verifier_instance_num = 0
+        instance = self.verifier_instances[self.__current_verifier_instance_num]
+        self.__current_verifier_instance_num += 1
+        logger.debug(f"Selected verifier instance: {instance}")
         return instance

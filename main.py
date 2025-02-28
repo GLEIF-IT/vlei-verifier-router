@@ -5,10 +5,12 @@ from starlette.responses import JSONResponse
 
 from controllers import VerifierController
 from utils.router_state import RouterState
+from utils.vlei_verifier_checker import run_api_scheduler
 
 app = FastAPI()
-config: dict = json.load(open("vlei_verifier_router_config.json"))
+config: dict = json.load(open("config.json"))
 RouterState.initialize(**config)
+run_api_scheduler()
 
 
 
