@@ -1,12 +1,24 @@
+configs:
+  config.json:
+    content: |
+      {
+        "verifier_instances": [
+          
+        ]
+      }
 services:
   vlei-verifier-router:
-    network_mode: host
     build:
       context: .
       dockerfile: ./images/vlei-verifier-router.dockerfile
     image: gleif/vlei-verifier-router:latest
+    configs:
+      - source: config.json
+        target: /usr/local/var/server/config.json
+    depends_on:
+      - redis
     environment:
-      REDIS_HOST: localhost
+      REDIS_HOST: redis
       REDIS_PORT: 6379
     ports:
       - 7676:7676
@@ -20,7 +32,6 @@ services:
       timeout: 3s
       retries: 5
       start_period: 2s
-
   redis:
     image: redis:latest
     container_name: redis
