@@ -1,12 +1,37 @@
 services:
-  vlei-verifier:
-    image: gleif/vlei-verifier:0.1.0
-    container_name: vlei-verifier
-    hostname: vlei-verifier
+  vlei-verifier-router:
+    network_mode: host
+    build:
+      context: .
+      dockerfile: ./images/vlei-verifier-router.dockerfile
+    image: gleif/vlei-verifier-router:latest
     environment:
-      - VERIFIER_CONFIG_FILE=verifier-config-test.json
-      - INSTANCE_NUMBER=${INSTANCE_NUMBER}
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
     ports:
-      - ${SERVICE_PORT}:7676
+      - 7676:7676
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:7676/health
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+
+volumes:
+  redis_data:
 
 
