@@ -1,17 +1,29 @@
 import json
-
+import os
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from starlette.responses import JSONResponse
-
 from controllers import VerifierController
 from utils.router_state import RouterState
-from utils.vlei_verifier_checker import run_api_scheduler
+from utils.vlei_verifier_checker import run_scheduler
+import logging
 
-app = FastAPI()
-config: dict = json.load(open("config.json"))
-RouterState.initialize(**config)
-run_api_scheduler()
+logger = logging.getLogger(__name__)
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Lifespan event handler for FastAPI.
+    """
+    # Initialize RouterState on startup
+    config: dict = json.load(open("config.json"))
+    RouterState.initialize(**config)
+    run_scheduler()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 @app.put("/presentations/{said}")
@@ -54,3 +66,23 @@ async def add_root_of_trust(aid: str, request: Request):
     oobi = request_json.get("oobi")
     response = VerifierController.add_root_of_trust(aid, vlei, oobi)
     return JSONResponse(status_code=response.code, content=response.body)
+
+
+@app.post("/add_verifier_instance")
+async def add_verifier_instance(request: Request):
+    request_json = await request.json()
+    verifier_instance = request_json.get("vlei_verifier_instance")
+    router_state = RouterState.get_state()
+    router_state.add_verifier_instance(verifier_instance)
+    return JSONResponse(status_code=200, content="Success")
+
+
+def main():
+    logger.info("Starting Reg-Pilot-API")
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=os.getenv("PORT", 7676))
+
+
+if __name__ == "__main__":
+    main()

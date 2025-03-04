@@ -41,7 +41,7 @@ class VerifierController:
 
         # Map the verifier instance to the AID
         aid = verifier_response.body["aid"]
-        RouterState.get_state().set_verifier_instance_for_aid(aid, verifier_client.verifier_base_url)
+        RouterState.get_state().add_aid_to_verifier_mapping(aid, verifier_client.verifier_base_url)
         logger.info(f"Presentation successful for SAID: {said}. Mapped to AID: {aid}")
         return verifier_response
 
@@ -102,7 +102,7 @@ class VerifierController:
         router_state = RouterState.get_state()
         verifier_responses = []
 
-        for verifier_base_url in router_state.verifier_instances:
+        for verifier_base_url in router_state.get_verifier_instances():
             logger.debug(f"Adding root of trust to verifier instance: {verifier_base_url}")
             verifier_client = VerifierClient(verifier_base_url)
             verifier_response = verifier_client.add_root_of_trust(aid, vlei, oobi)
