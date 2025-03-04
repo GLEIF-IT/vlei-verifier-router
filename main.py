@@ -78,7 +78,7 @@ async def add_verifier_instance(request: Request):
 
 
 def main():
-    logger.info("Starting Reg-Pilot-API")
+    logger.info("Starting Vlei-Verifier_Router")
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=os.getenv("PORT", 7676))
