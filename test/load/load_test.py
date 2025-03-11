@@ -62,7 +62,7 @@ async def load_test():
     total_requests = 0
     tasks: List[asyncio.Task] = []
 
-    # Define concurrency limit (similar to max_workers=100)
+    # Define concurrency limit
     concurrency_limit = 100
     semaphore = asyncio.Semaphore(concurrency_limit)
 
@@ -82,7 +82,7 @@ async def load_test():
                 print(f"Error in credential file {cred_file}: {cred_data['error']}")
                 continue
 
-            # Submit 40 requests per credential
+            # Submit amount of requests per credential
             for _ in range(400):
                 task = asyncio.create_task(
                     post_with_semaphore(
