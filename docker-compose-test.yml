@@ -5,7 +5,24 @@ configs:
         "verifier_instances": [
           "http://vlei-verifier-1:7676",
           "http://vlei-verifier-2:7676",
-          "http://vlei-verifier-3:7676"
+          "http://vlei-verifier-3:7676",
+          "http://vlei-verifier-4:7676",
+          "http://vlei-verifier-5:7676",
+          "http://vlei-verifier-6:7676",
+          "http://vlei-verifier-7:7676",
+          "http://vlei-verifier-8:7676",
+          "http://vlei-verifier-9:7676",
+          "http://vlei-verifier-10:7676",
+          "http://vlei-verifier-11:7676",
+          "http://vlei-verifier-12:7676",
+          "http://vlei-verifier-13:7676",
+          "http://vlei-verifier-14:7676",
+          "http://vlei-verifier-15:7676",
+          "http://vlei-verifier-16:7676",
+          "http://vlei-verifier-17:7676",
+          "http://vlei-verifier-18:7676",
+          "http://vlei-verifier-19:7676",
+          "http://vlei-verifier-20:7676"
         ]
       }
   wan.json:
@@ -80,6 +97,23 @@ services:
       - vlei-verifier-1
       - vlei-verifier-2
       - vlei-verifier-3
+      - vlei-verifier-4
+      - vlei-verifier-5
+      - vlei-verifier-6
+      - vlei-verifier-7
+      - vlei-verifier-8
+      - vlei-verifier-9
+      - vlei-verifier-10
+      - vlei-verifier-11
+      - vlei-verifier-12
+      - vlei-verifier-13
+      - vlei-verifier-14
+      - vlei-verifier-15
+      - vlei-verifier-16
+      - vlei-verifier-17
+      - vlei-verifier-18
+      - vlei-verifier-19
+      - vlei-verifier-20
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -200,6 +234,294 @@ services:
       - witness-demo
     ports:
       - 5654:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-4:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-4
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5655:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-5:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-5
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5656:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-6:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-6
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5657:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-7:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-7
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5658:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-8:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-8
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5659:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-9:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-9
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5660:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-10:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-10
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5661:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+  vlei-verifier-11:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-11
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5662:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-12:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-12
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5663:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-13:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-13
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5664:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-14:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-14
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5665:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-15:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-15
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5666:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-16:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-16
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5667:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-17:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-17
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5668:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-18:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-18
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5669:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-19:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-19
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5670:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-20:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-20
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5671:7676
     healthcheck:
       test: [ 'CMD', 'wget', '--spider', 'http://localhost:7676/health' ]
       interval: 2s
