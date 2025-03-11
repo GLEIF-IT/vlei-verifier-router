@@ -2,24 +2,6 @@
 # -*- encoding: utf-8 -*-
 """
 $ python setup.py register sdist upload
-
-First Time register project on pypi
-https://pypi.org/manage/projects/
-
-
-More secure to use twine to upload
-$ pip3 install twine
-$ python3 setup.py sdist
-$ twine upload dist/keria-0.0.1.tar.gz
-
-
-Update sphinx /docs
-$ cd /docs
-$ sphinx-build -b html source build/html
-or
-$ sphinx-apidoc -f -o source/ ../src/
-$ make html
-
 Best practices for setup.py and requirements.txt
 https://caremad.io/posts/2013/07/setup-vs-requirement/
 """
@@ -78,7 +60,7 @@ setup(
         "requests>=2.32.3",
         "python-multipart",
         "apscheduler>=3.11.0",
-        "vlei-verifier-client==0.1.0",
+        "vlei-verifier-client==0.1.1",
         "redis>=5.2.1"
     ],
     extras_require={
