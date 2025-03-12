@@ -63,7 +63,7 @@ async def load_test():
     tasks: List[asyncio.Task] = []
 
     # Define concurrency limit
-    concurrency_limit = 100
+    concurrency_limit = 50
     semaphore = asyncio.Semaphore(concurrency_limit)
 
     print(f"Starting load test with {concurrency_limit} concurrent requests...")
@@ -83,7 +83,7 @@ async def load_test():
                 continue
 
             # Submit amount of requests per credential
-            for _ in range(400):
+            for _ in range(20):
                 task = asyncio.create_task(
                     post_with_semaphore(
                         semaphore,
@@ -128,6 +128,6 @@ async def load_test():
     print(f"Throughput: {throughput:.2f} requests/second")
     print(f"Total time taken: {end_time - start_time:.2f} seconds")
 
-# Entry point
+
 if __name__ == "__main__":
     asyncio.run(load_test())
