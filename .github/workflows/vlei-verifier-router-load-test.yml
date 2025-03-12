@@ -1,0 +1,74 @@
+name: Run Vlei Verifier Router Load test
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+  workflow_dispatch:
+jobs:
+  load-test:
+    name: Run vlei-verifier-router load test
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up Python 3.12.2
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12.2
+      - name: Install libsodium
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsodium-dev
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest pytest-cov hio httpx
+          pip install -r requirements.txt
+      ##################################
+      # RUN ROUTER MODE
+      ##################################
+      - name: Start Router Mode Services
+        run: |
+          docker compose down
+          docker compose -f docker-compose-load-test.yml up router -d
+
+      - name: Wait for Router Mode services to be healthy
+        run: |
+          docker compose ps
+          sleep 15
+
+      - name: Run Load Test for Router Mode
+        run: |
+          echo "Running Router mode load test..."
+          python test/load/load_test.py
+
+      - name: Stop Router Mode Services
+        run: docker compose down
+
+      ##################################
+      # RUN VERIFIER MODE
+      ##################################
+      - name: Start Verifier Mode Services
+        run: |
+          docker compose down
+          docker compose -f docker-compose-load-test.yml up verifier -d
+
+      - name: Wait for Verifier service to be healthy
+        run: |
+          docker compose ps
+          sleep 15
+
+      - name: Run Load Test for Verifier Mode
+        run: |
+          echo "Running Verifier mode load test..."
+          python load_test.py
+
+      - name: Stop Verifier Mode Services
+        run: docker compose down
+
+      - name: Print Results Done
+        run: echo "Load tests completed successfully!"

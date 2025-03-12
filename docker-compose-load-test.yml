@@ -1,0 +1,294 @@
+configs:
+  config.json:
+    content: |
+      {
+        "verifier_instances": [
+          "http://vlei-verifier-1:7676",
+          "http://vlei-verifier-2:7676",
+          "http://vlei-verifier-3:7676",
+          "http://vlei-verifier-4:7676",
+          "http://vlei-verifier-5:7676"
+        ]
+      }
+  wan.json:
+    content: |
+      {
+          "dt": "2022-01-20T12:57:59.823350+00:00",
+          "wan": {
+            "dt": "2022-01-20T12:57:59.823350+00:00",
+            "curls": ["tcp://witness-demo:5632/", "http://witness-demo:5642/"]
+          },
+      }
+
+  wil.json:
+    content: |
+      {
+          "dt": "2022-01-20T12:57:59.823350+00:00",
+          "wil": {
+              "dt": "2022-01-20T12:57:59.823350+00:00",
+              "curls": ["http://witness-demo:5643/"]
+          }
+      }
+  wes.json:
+    content: |
+      {
+          "dt": "2022-01-20T12:57:59.823350+00:00",
+          "wes": {
+              "dt": "2022-01-20T12:57:59.823350+00:00",
+              "curls": ["http://witness-demo:5644/"]
+          }
+      }
+
+  wit.json:
+    content: |
+      {
+          "dt": "2022-01-20T12:57:59.823350+00:00",
+          "wit": {
+              "dt": "2022-01-20T12:57:59.823350+00:00",
+              "curls": ["http://witness-demo:5645/"]
+          }
+      }
+
+  wub.json:
+    content: |
+      {
+          "dt": "2022-01-20T12:57:59.823350+00:00",
+          "wub": {
+              "dt": "2022-01-20T12:57:59.823350+00:00",
+              "curls": ["http://witness-demo:5646/"]
+          }
+      }
+
+  wyx.json:
+    content: |
+      {
+          "dt": "2022-01-20T12:57:59.823350+00:00",
+          "wyx": {
+              "dt": "2022-01-20T12:57:59.823350+00:00",
+              "curls": ["http://witness-demo:5647/"]
+          }
+      }
+services:
+  vlei-verifier-router:
+    build:
+      context: .
+      dockerfile: ./images/vlei-verifier-router.dockerfile
+    image: gleif/vlei-verifier-router:latest
+    hostname: vlei-verifier-router
+    configs:
+      - source: config.json
+        target: /usr/local/var/server/config.json
+    depends_on:
+      - redis
+      - vlei-verifier-1
+      - vlei-verifier-2
+      - vlei-verifier-3
+      - vlei-verifier-4
+      - vlei-verifier-5
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - 7676:7676
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://vlei-verifier-router:7676/docs"]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+
+  vlei-server:
+    image: gleif/vlei
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONIOENCODING=UTF-8
+    command:
+      - vLEI-server
+      - -s
+      - ./schema/acdc
+      - -c
+      - ./samples/acdc/
+      - -o
+      - ./samples/oobis/
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:7723/oobi/EBfdlu8R27Fbx-ehrqwImnK-8Cm79sqbAQ4MmvEAYqao
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+    ports:
+      - 7723:7723
+
+  witness-demo:
+    image: weboftrust/keri-witness-demo:1.1.0
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONIOENCODING=UTF-8
+    healthcheck:
+      test: [ 'CMD', 'curl', '-f', 'http://localhost:5642/oobi' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+    configs:
+      - source: wan.json
+        target: /keripy/scripts/keri/cf/main/wan.json
+      - source: wes.json
+        target: /keripy/scripts/keri/cf/main/wes.json
+      - source: wil.json
+        target: /keripy/scripts/keri/cf/main/wil.json
+      - source: wit.json
+        target: /keripy/scripts/keri/cf/main/wit.json
+      - source: wub.json
+        target: /keripy/scripts/keri/cf/main/wub.json
+      - source: wyx.json
+        target: /keripy/scripts/keri/cf/main/wyx.json
+
+  vlei-verifier-single-mode:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-single-mode
+    hostname: vlei-verifier-single-mode
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 7676:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://vlei-verifier-single-mode:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-1:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-1
+    hostname: vlei-verifier-1
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5652:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://vlei-verifier-1:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-2:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-2
+    hostname: vlei-verifier-2
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5653:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://vlei-verifier-2:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-3:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-3
+    hostname: vlei-verifier-3
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5654:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://vlei-verifier-3:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-4:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-4
+    hostname: vlei-verifier-4
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5655:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://vlei-verifier-4:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  vlei-verifier-5:
+    image: gleif/vlei-verifier:latest
+    container_name: vlei-verifier-5
+    hostname: vlei-verifier-5
+    environment:
+      - VERIFIER_CONFIG_FILE=verifier-config-test.json
+    depends_on:
+      - vlei-server
+      - witness-demo
+    ports:
+      - 5656:7676
+    healthcheck:
+      test: [ 'CMD', 'wget', '--spider', 'http://vlei-verifier-5:7676/health' ]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  router:
+    image: alpine:latest
+    command: [ 'echo', 'Router mode dependencies running' ]
+    depends_on:
+      vlei-server:
+        condition: service_healthy
+      witness-demo:
+        condition: service_healthy
+      vlei-verifier-router:
+        condition: service_healthy
+
+  verifier:
+    image: alpine:latest
+    command: [ 'echo', 'Verifier mode dependencies running' ]
+    depends_on:
+      vlei-server:
+        condition: service_healthy
+      witness-demo:
+        condition: service_healthy
+      vlei-verifier-single-mode:
+        condition: service_healthy
+
+
+volumes:
+  redis_data:
+
+
