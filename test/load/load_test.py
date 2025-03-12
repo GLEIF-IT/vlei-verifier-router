@@ -53,7 +53,7 @@ async def post_with_semaphore(semaphore, aid, said, vlei):
 async def load_test():
     global successful_requests, failed_requests, total_latency
 
-    folder_path = "./test_data/"
+    folder_path = os.path.join(os.path.dirname(__file__), "test_data")
     credentials_files = [
         f for f in os.listdir(folder_path)
         if os.path.isfile(os.path.join(folder_path, f))
@@ -120,10 +120,6 @@ async def load_test():
     # Final results
     print("\n=== Load Test Metrics ===")
     print(f"Total Requests: {total_requests}")
-    print(f"Successful Requests: {successful_requests}")
-    print(f"Failed Requests: {failed_requests}")
-    print(f"Success Rate: {success_rate:.2f}%")
-    print(f"Error Rate: {error_rate:.2f}%")
     print(f"Average Response Time: {average_response_time:.4f} seconds")
     print(f"Throughput: {throughput:.2f} requests/second")
     print(f"Total time taken: {end_time - start_time:.2f} seconds")
