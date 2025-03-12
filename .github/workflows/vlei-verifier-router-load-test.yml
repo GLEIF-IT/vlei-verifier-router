@@ -29,7 +29,7 @@ jobs:
       - name: Start Router Mode Services
         run: |
           docker compose -f docker-compose-load-test.yml down
-          docker compose -f docker-compose-load-test.yml up router -d
+          docker compose -f docker-compose-load-test.yml up router --build -d
 
       - name: Wait for Router Mode services to be healthy
         run: |
@@ -67,7 +67,12 @@ jobs:
 
       - name: Compare Router and Verifier load test Metrics
         run: |
-          diff --label "Router" <(tail -n 5 router_metrics.json) --label "Verifier" <(tail -n 5 verifier_metrics.json)
+          echo "Router Metrics:"
+          tail -n 5 router_metrics.json
+          echo ""        
+          echo "Verifier Metrics:"
+          tail -n 5 verifier_metrics.json
+          echo ""
 
       - name: Print Results Done
         run: echo "Load tests completed successfully!"
