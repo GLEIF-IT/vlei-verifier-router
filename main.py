@@ -83,7 +83,7 @@ async def add_verifier_instance(request: Request):
     return JSONResponse(status_code=200, content="Success")
 
 
-@app.get("/status")
+@app.get("/service_status")
 async def add_verifier_instance():
     return JSONResponse(status_code=200, content={
         "status": "OK",
