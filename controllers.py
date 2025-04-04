@@ -1,5 +1,5 @@
 import logging
-from vlei_verifier_client import VerifierClient, VerifierResponse, AsyncVerifierClient
+from vlei_verifier_client import VerifierResponse, AsyncVerifierClient
 from utils.router_state import RouterState
 
 # Configure logging
@@ -33,7 +33,7 @@ class VerifierController:
         """
         logger.info(f"Starting presentation for SAID: {said}")
         verifier_client = VerifierController._get_verifier_client(said=said)
-        verifier_response = await verifier_client.login(said=said, vlei=vlei)
+        verifier_response = await verifier_client.presentation(said=said, vlei=vlei)
 
         if verifier_response.code >= 300:
             logger.warning(f"Presentation failed for SAID: {said}. Code: {verifier_response.code}, Message: {verifier_response.message}")
@@ -46,18 +46,35 @@ class VerifierController:
         return verifier_response
 
     @staticmethod
-    async def authorization(aid: str) -> VerifierResponse:
+    async def authorization(aid: str, headers) -> VerifierResponse:
         """
         Handle authorization logic for a given AID.
         """
         logger.info(f"Starting authorization for AID: {aid}")
         verifier_client = VerifierController._get_verifier_client(aid=aid)
-        verifier_response = await verifier_client.check_login(aid=aid)
+        verifier_response = await verifier_client.authorization(aid=aid, headers=headers)
 
         if verifier_response.code >= 300:
             logger.warning(f"Authorization failed for AID: {aid}. Code: {verifier_response.code}, Message: {verifier_response.message}")
         else:
             logger.info(f"Authorization successful for AID: {aid}")
+
+        return verifier_response
+
+    @staticmethod
+    async def presentations_history(aid: str) -> VerifierResponse:
+        """
+        Handle authorization logic for a given AID.
+        """
+        logger.info(f"Starting get presentations history for AID: {aid}")
+        verifier_client = VerifierController._get_verifier_client(aid=aid)
+        verifier_response = await verifier_client.get_presentations_history(aid=aid)
+
+        if verifier_response.code >= 300:
+            logger.warning(
+                f"Authorization failed for AID: {aid}. Code: {verifier_response.code}, Message: {verifier_response.message}")
+        else:
+            logger.info(f"Get presentations history successful for AID: {aid}")
 
         return verifier_response
 

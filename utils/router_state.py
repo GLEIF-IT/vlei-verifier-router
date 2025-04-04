@@ -1,6 +1,6 @@
 import json
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 import redis
 from typing import List, Dict, Optional
 import logging
@@ -17,7 +17,7 @@ class RouterState:
     """
 
     _instance: Optional["RouterState"] = None
-    __current_verifier_instance_num: int = 0
+    _current_verifier_instance_num: int = 0
 
     def __new__(cls, *args, **kwargs):
         """
@@ -158,10 +158,9 @@ class RouterState:
             raise ValueError("No verifier instances available.")
 
         # Round-robin selection
-        if self.__current_verifier_instance_num >= len(verifier_instances):
-            self.__current_verifier_instance_num = 0
-        instance = verifier_instances[self.__current_verifier_instance_num]
-        self.__current_verifier_instance_num += 1
-        instance = instance
+        if self._current_verifier_instance_num >= len(verifier_instances):
+            self._current_verifier_instance_num = 0
+        instance = verifier_instances[self._current_verifier_instance_num]
+        self._current_verifier_instance_num += 1
         logger.debug(f"Selected verifier instance: {instance}")
         return instance

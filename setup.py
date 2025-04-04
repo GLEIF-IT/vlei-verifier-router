@@ -15,7 +15,7 @@ from setuptools import setup
 
 setup(
     name='vlei-verifier-router',
-    version='0.1.0',  # also change in src/verifier/__init__.py
+    version='0.1.1',
     license='Apache Software License 2.0',
     description='Vlei Verifier Router',
     long_description="Vlei Verifier Router",
@@ -60,7 +60,7 @@ setup(
         "requests>=2.32.3",
         "python-multipart",
         "apscheduler>=3.11.0",
-        "vlei-verifier-client==0.1.1",
+        "vlei-verifier-client==0.1.4",
         "redis>=5.2.1"
     ],
     extras_require={

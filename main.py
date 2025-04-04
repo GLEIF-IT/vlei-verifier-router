@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(fastapi_app: FastAPI):
     """
     Lifespan event handler for FastAPI.
     """
@@ -35,8 +35,14 @@ async def present_credential(said: str, request: Request):
 
 
 @app.get("/authorizations/{aid}")
-async def authorization(aid: str,):
-    response = await VerifierController.authorization(aid)
+async def authorization(aid: str, request: Request):
+    response = await VerifierController.authorization(aid, request.headers)
+    return JSONResponse(status_code=response.code, content=response.body)
+
+
+@app.get("/presentations/history/{aid}")
+async def presentations_history(aid: str, request: Request):
+    response = await VerifierController.presentations_history(aid)
     return JSONResponse(status_code=response.code, content=response.body)
 
 
@@ -75,6 +81,23 @@ async def add_verifier_instance(request: Request):
     router_state = RouterState.get_state()
     router_state.add_verifier_instance(verifier_instance)
     return JSONResponse(status_code=200, content="Success")
+
+
+@app.get("/status")
+async def add_verifier_instance():
+    return JSONResponse(status_code=200, content={
+        "status": "OK",
+        "mode": "router"
+    })
+
+
+@app.get("/get_verifier_url_for_aid/{aid}")
+async def add_verifier_instance(aid: str):
+    router_state = RouterState.get_state()
+    verifier_instance = router_state.get_verifier_instance_for_aid(aid)
+    return JSONResponse(status_code=200, content={
+        "verifier_url": verifier_instance
+    })
 
 
 def main():
