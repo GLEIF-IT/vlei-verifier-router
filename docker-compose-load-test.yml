@@ -106,66 +106,13 @@ services:
       - redis_data:/data
     restart: always
 
-  vlei-server:
-    image: gleif/vlei
-    environment:
-      - PYTHONUNBUFFERED=1
-      - PYTHONIOENCODING=UTF-8
-    command:
-      - vLEI-server
-      - -s
-      - ./schema/acdc
-      - -c
-      - ./samples/acdc/
-      - -o
-      - ./samples/oobis/
-    healthcheck:
-      test:
-        - CMD
-        - curl
-        - -f
-        - http://localhost:7723/oobi/EBfdlu8R27Fbx-ehrqwImnK-8Cm79sqbAQ4MmvEAYqao
-      interval: 2s
-      timeout: 3s
-      retries: 5
-      start_period: 2s
-    ports:
-      - 7723:7723
-
-  witness-demo:
-    image: weboftrust/keri-witness-demo:1.1.0
-    environment:
-      - PYTHONUNBUFFERED=1
-      - PYTHONIOENCODING=UTF-8
-    healthcheck:
-      test: [ 'CMD', 'curl', '-f', 'http://localhost:5642/oobi' ]
-      interval: 2s
-      timeout: 3s
-      retries: 5
-      start_period: 2s
-    configs:
-      - source: wan.json
-        target: /keripy/scripts/keri/cf/main/wan.json
-      - source: wes.json
-        target: /keripy/scripts/keri/cf/main/wes.json
-      - source: wil.json
-        target: /keripy/scripts/keri/cf/main/wil.json
-      - source: wit.json
-        target: /keripy/scripts/keri/cf/main/wit.json
-      - source: wub.json
-        target: /keripy/scripts/keri/cf/main/wub.json
-      - source: wyx.json
-        target: /keripy/scripts/keri/cf/main/wyx.json
-
   vlei-verifier-single-mode:
-    image: gleif/vlei-verifier:latest
+    image: gleif/vlei-verifier:0.1.2
     container_name: vlei-verifier-single-mode
     hostname: vlei-verifier-single-mode
     environment:
       - VERIFIER_CONFIG_FILE=verifier-config-test.json
-    depends_on:
-      - vlei-server
-      - witness-demo
+      - VERIFIER_MODE=test
     ports:
       - 7676:7676
     healthcheck:
@@ -176,14 +123,12 @@ services:
       start_period: 2s
 
   vlei-verifier-1:
-    image: gleif/vlei-verifier:latest
+    image: gleif/vlei-verifier:0.1.2
     container_name: vlei-verifier-1
     hostname: vlei-verifier-1
     environment:
       - VERIFIER_CONFIG_FILE=verifier-config-test.json
-    depends_on:
-      - vlei-server
-      - witness-demo
+      - VERIFIER_MODE=test
     ports:
       - 5652:7676
     healthcheck:
@@ -194,14 +139,12 @@ services:
       start_period: 2s
 
   vlei-verifier-2:
-    image: gleif/vlei-verifier:latest
+    image: gleif/vlei-verifier:0.1.2
     container_name: vlei-verifier-2
     hostname: vlei-verifier-2
     environment:
       - VERIFIER_CONFIG_FILE=verifier-config-test.json
-    depends_on:
-      - vlei-server
-      - witness-demo
+      - VERIFIER_MODE=test
     ports:
       - 5653:7676
     healthcheck:
@@ -212,14 +155,12 @@ services:
       start_period: 2s
 
   vlei-verifier-3:
-    image: gleif/vlei-verifier:latest
+    image: gleif/vlei-verifier:0.1.2
     container_name: vlei-verifier-3
     hostname: vlei-verifier-3
     environment:
       - VERIFIER_CONFIG_FILE=verifier-config-test.json
-    depends_on:
-      - vlei-server
-      - witness-demo
+      - VERIFIER_MODE=test
     ports:
       - 5654:7676
     healthcheck:
@@ -230,14 +171,12 @@ services:
       start_period: 2s
 
   vlei-verifier-4:
-    image: gleif/vlei-verifier:latest
+    image: gleif/vlei-verifier:0.1.2
     container_name: vlei-verifier-4
     hostname: vlei-verifier-4
     environment:
       - VERIFIER_CONFIG_FILE=verifier-config-test.json
-    depends_on:
-      - vlei-server
-      - witness-demo
+      - VERIFIER_MODE=test
     ports:
       - 5655:7676
     healthcheck:
@@ -248,14 +187,12 @@ services:
       start_period: 2s
 
   vlei-verifier-5:
-    image: gleif/vlei-verifier:latest
+    image: gleif/vlei-verifier:0.1.2
     container_name: vlei-verifier-5
     hostname: vlei-verifier-5
     environment:
       - VERIFIER_CONFIG_FILE=verifier-config-test.json
-    depends_on:
-      - vlei-server
-      - witness-demo
+      - VERIFIER_MODE=test
     ports:
       - 5656:7676
     healthcheck:
@@ -269,10 +206,6 @@ services:
     image: alpine:latest
     command: [ 'echo', 'Router mode dependencies running' ]
     depends_on:
-      vlei-server:
-        condition: service_healthy
-      witness-demo:
-        condition: service_healthy
       vlei-verifier-router:
         condition: service_healthy
 
@@ -280,11 +213,22 @@ services:
     image: alpine:latest
     command: [ 'echo', 'Verifier mode dependencies running' ]
     depends_on:
-      vlei-server:
-        condition: service_healthy
-      witness-demo:
-        condition: service_healthy
       vlei-verifier-single-mode:
+        condition: service_healthy
+
+  verifier-instances:
+    image: alpine:latest
+    command: [ 'echo', 'Verifier mode dependencies running' ]
+    depends_on:
+      vlei-verifier-1:
+        condition: service_healthy
+      vlei-verifier-2:
+        condition: service_healthy
+      vlei-verifier-3:
+        condition: service_healthy
+      vlei-verifier-4:
+        condition: service_healthy
+      vlei-verifier-5:
         condition: service_healthy
 
 

@@ -14,8 +14,8 @@ async def send_post_request(aid, said, vlei):
         client = AsyncVerifierClient("http://localhost:7676")
         start_time = time.perf_counter()
 
-        presentations_response: VerifierResponse = await client.login(said, vlei)
-        auth_response: VerifierResponse = await client.check_login(aid)
+        presentations_response: VerifierResponse = await client.presentation(said, vlei)
+        auth_response: VerifierResponse = await client.authorization(aid)
 
         end_time = time.perf_counter()
         latency = end_time - start_time
