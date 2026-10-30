@@ -140,7 +140,7 @@ services:
     restart: always
 
   vlei-server:
-    image: gleif/vlei
+    image: gleif/vlei:1.0.7@sha256:d42bffb148f531b99f8817e17723cbf21bdf6c357a69de63895078ae8b42601c
     environment:
       - PYTHONUNBUFFERED=1
       - PYTHONIOENCODING=UTF-8
@@ -166,12 +166,13 @@ services:
       - 7723:7723
 
   witness-demo:
-    image: weboftrust/keri-witness-demo:1.1.0
+    image: gleif/keri:1.2.19@sha256:a46ecb85e6210f8340465d7423195cad2a550cdff83e0dfdfa50b07062bc5e76
+    entrypoint: ['kli', 'witness', 'demo']
     environment:
       - PYTHONUNBUFFERED=1
       - PYTHONIOENCODING=UTF-8
     healthcheck:
-      test: [ 'CMD', 'curl', '-f', 'http://localhost:5642/oobi' ]
+      test: [ 'CMD', 'wget', '--spider', 'http://witness-demo:5642/oobi' ]
       interval: 2s
       timeout: 3s
       retries: 5
